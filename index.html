@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="sw">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#c99500">
+  <title>JAY ZONE TV</title>
+  <style>
+    :root { --gold:#d49a00; --orange:#e87808; --bg:#100e0e; --card:#242222; --panel:#191717; --muted:#a9a4a4; }
+    * { box-sizing:border-box; }
+    body { margin:0; background:var(--bg); color:#f7f5f5; font-family:Arial,Helvetica,sans-serif; }
+    .statusbar { height:28px; background:#c99500; }
+    header { position:sticky; top:0; z-index:5; background:#151313; border-bottom:1px solid #302b2b; display:flex; align-items:center; gap:12px; padding:14px 16px; }
+    .logo { width:46px; height:46px; border-radius:12px; display:grid; place-items:center; color:#fff; font-weight:900; background:linear-gradient(145deg,#f49a12,#b85b00); box-shadow:0 3px 14px #0007; }
+    .brand { min-width:0; flex:1; }
+    .brand h1 { font-size:15px; letter-spacing:1.5px; margin:0; color:#e8a12b; }
+    .brand p { margin:3px 0 0; color:#d2caca; font-size:11px; letter-spacing:2px; }
+    .login { border:0; background:#d8750b; color:#fff; font-weight:bold; padding:11px 17px; border-radius:22px; }
+    .intro { padding:18px 17px 6px; }
+    .intro h2 { font-size:20px; margin:0 0 6px; }
+    .intro p { color:var(--muted); font-size:13px; line-height:1.5; margin:0; }
+    .tools { display:flex; gap:9px; padding:12px 17px 15px; }
+    .tools input, .tools select { min-width:0; background:#211f1f; color:#fff; border:1px solid #393535; border-radius:10px; padding:11px 12px; font-size:13px; }
+    .tools input { flex:1; }
+    .tools select { width:120px; }
+    .grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; padding:0 17px 100px; }
+    .channel { background:var(--card); border:1px solid #302c2c; border-radius:17px; overflow:hidden; min-width:0; }
+    .screen { height:142px; position:relative; display:flex; align-items:center; justify-content:center; background:linear-gradient(135deg,#252323,#211f1f); }
+    .badge { position:absolute; top:10px; left:11px; border-radius:7px; background:#d73743; color:white; font-size:10px; font-weight:bold; padding:5px 9px; letter-spacing:.2px; }
+    .monitor { width:50px; height:35px; border:4px solid #514b4b; border-radius:6px; position:relative; opacity:.8; }
+    .monitor:before { content:""; position:absolute; height:4px; width:17px; background:#514b4b; bottom:-10px; left:12px; border-radius:3px; }
+    .screen-art { font-size:19px; font-weight:900; letter-spacing:-.6px; color:#fff; text-shadow:0 2px 4px #000; text-align:center; padding:12px; }
+    .screen-art span { color:#ffc342; }
+    .channel-info { border-top:1px solid #302c2c; background:#191717; padding:13px 12px; }
+    .channel-info h3 { margin:0; font-size:14px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .channel-info p { color:#aaa3a3; font-size:11px; margin:6px 0 10px; min-height:25px; line-height:1.35; }
+    .watch { display:block; text-align:center; text-decoration:none; background:#d8750b; color:#fff; padding:10px 8px; border-radius:9px; font-size:12px; font-weight:bold; }
+    .watch.disabled { background:#393333; color:#bdb6b6; }
+    .notice { margin:0 17px 90px; padding:12px 14px; border:1px solid #51402a; background:#211b13; color:#d6c9b6; border-radius:12px; font-size:12px; line-height:1.5; }
+    nav { position:fixed; bottom:0; left:0; right:0; z-index:10; display:flex; justify-content:space-around; background:#191717; border-top:1px solid #332e2e; padding:10px 4px calc(10px + env(safe-area-inset-bottom)); }
+    nav a { color:#aaa3a3; text-decoration:none; text-align:center; font-size:11px; min-width:50px; }
+    nav a.active { color:#e99514; }
+    nav .ico { display:block; font-size:21px; margin-bottom:4px; }
+    footer { color:#777; text-align:center; font-size:11px; padding:0 16px 110px; }
+    @media(min-width:700px) { .grid { grid-template-columns:repeat(3,minmax(0,1fr)); max-width:1050px; margin:auto; } .intro,.tools { max-width:1050px; margin:auto; } header { padding-left:max(16px,calc((100vw - 1050px)/2)); padding-right:max(16px,calc((100vw - 1050px)/2)); } .screen { height:175px; } }
+  </style>
+</head>
+<body>
+  <div class="statusbar"></div>
+  <header>
+    <div class="logo">JZ</div>
+    <div class="brand"><h1>JAY ZONE TV</h1><p>TV • SPORTS • ENTERTAINMENT</p></div>
+    <button class="login" onclick="showInfo()">Info</button>
+  </header>
+
+  <section class="intro" id="home">
+    <h2>Channel za TV</h2>
+    <p>Chagua channel ili kufungua huduma rasmi ya mtangazaji. Hii ni katalogi ya link, si chanzo cha matangazo ya moja kwa moja.</p>
+  </section>
+
+  <div class="tools">
+    <input id="search" type="search" placeholder="Tafuta channel..." aria-label="Tafuta channel">
+    <select id="category" aria-label="Chuja channel">
+      <option value="all">Zote</option>
+      <option value="Sports">Sports</option>
+      <option value="Burudani">Burudani</option>
+      <option value="Habari">Habari</option>
+    </select>
+  </div>
+
+  <main class="grid" id="channelGrid"></main>
+
+  <div class="notice">
+    <strong>Usalama na haki:</strong> JAY ZONE TV inaunganisha watumiaji na tovuti/huduma rasmi pekee. Haijumuishi stream za siri au link zisizoidhinishwa. Hakikisha una ruhusa kabla ya kupachika au kusambaza matangazo.
+  </div>
+  <footer>JAY ZONE TV • Katalogi huru ya viungo rasmi. Haina uhusiano rasmi na Azam Media au vituo vilivyoorodheshwa.</footer>
+
+  <nav>
+    <a href="#home" class="active"><span class="ico">⌂</span>Home</a>
+    <a href="#channelGrid" onclick="setCategory('Sports')"><span class="ico">♜</span>Mechi</a>
+    <a href="https://web.azamtvmax.com/" target="_blank" rel="noopener"><span class="ico">▣</span>AzamTV Max</a>
+    <a href="#" onclick="showInfo();return false;"><span class="ico">♙</span>Info</a>
+  </nav>
+
+<script>
+  // Ongeza link rasmi tu baada ya kuithibitisha. Usitumie URL za stream zisizoidhinishwa.
+  const channels = [
+    {name:"Azam Sports 1", category:"Sports", label:"AZAM SPORTS", url:"https://web.azamtvmax.com/", desc:"Fungua huduma rasmi ya AzamTV Max."},
+    {name:"Azam Sports 2", category:"Sports", label:"AZAM SPORTS", url:"https://web.azamtvmax.com/", desc:"Fungua huduma rasmi ya AzamTV Max."},
+    {name:"Azam One", category:"Burudani", label:"AZAM ONE", url:"https://web.azamtvmax.com/", desc:"Fungua huduma rasmi ya AzamTV Max."},
+    {name:"Azam Two", category:"Burudani", label:"AZAM TWO", url:"https://web.azamtvmax.com/", desc:"Fungua huduma rasmi ya AzamTV Max."},
+    {name:"Wasafi TV", category:"Burudani", label:"WASAFI TV", url:"", desc:"Ongeza link rasmi ya kituo hiki unapokuwa nayo."},
+    {name:"UTV", category:"Burudani", label:"UTV", url:"", desc:"Ongeza link rasmi ya kituo hiki unapokuwa nayo."},
+    {name:"Sinema Zetu", category:"Burudani", label:"SINEMA ZETU", url:"", desc:"Ongeza link rasmi ya kituo hiki unapokuwa nayo."},
+    {name:"Kix Movie", category:"Burudani", label:"KIX MOVIE", url:"", desc:"Ongeza link rasmi ya kituo hiki unapokuwa nayo."},
+    {name:"Channel za Habari", category:"Habari", label:"HABARI", url:"", desc:"Ongeza tovuti rasmi ya kituo unachotaka."},
+    {name:"Mechi na Ratiba", category:"Sports", label:"SPORTS", url:"https://web.azamtvmax.com/", desc:"Tembelea huduma rasmi ya AzamTV Max."}
+  ];
+
+  const grid = document.getElementById('channelGrid');
+  function render() {
+    const q = document.getElementById('search').value.trim().toLowerCase();
+    const cat = document.getElementById('category').value;
+    const filtered = channels.filter(c => c.name.toLowerCase().includes(q) && (cat === 'all' || c.category === cat));
+    grid.innerHTML = filtered.map(c => `
+      <article class="channel">
+        <div class="screen">
+          <span class="badge">RASMI</span>
+          <div class="screen-art">${c.label.includes('AZAM') ? 'AZAM <span>TV</span>' : c.label}</div>
+        </div>
+        <div class="channel-info">
+          <h3>${c.name}</h3>
+          <p>${c.desc}</p>
+          ${c.url ? `<a class="watch" href="${c.url}" target="_blank" rel="noopener">Fungua rasmi ↗</a>` : `<a class="watch disabled" href="#" onclick="alert('Link rasmi haijaongezwa bado.');return false;">Link haijawekwa</a>`}
+        </div>
+      </article>`).join('');
+    if (!filtered.length) grid.innerHTML = '<p style="color:#aaa">Hakuna channel iliyopatikana.</p>';
+  }
+  document.getElementById('search').addEventListener('input', render);
+  document.getElementById('category').addEventListener('change', render);
+  function setCategory(value) {
+    document.getElementById('category').value = value;
+    render();
+  }
+  function showInfo() {
+    alert('JAY ZONE TV ni katalogi ya link rasmi. Kwa sasa link ya AzamTV Max imewekwa; kwa channel nyingine, ongeza URL rasmi iliyothibitishwa kwenye orodha ya channels ndani ya faili index.html.');
+  }
+  render();
+</script>
+</body>
+</html>
